@@ -1,16 +1,28 @@
 ######### Import your libraries #######
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
+from dash.dependencies import Input, Output, State
 import os
 
 ###### Set up variables
-list_of_choices=['Bulbasaur', 'Squirtle', 'Charmander']
+list_of_choices=[
+    {
+        "label": "Bulbasaur",
+        "action": "https://c.tenor.com/6GYLcQPTRHgAAAAi/bulbizarre-bulbasaur.gif"
+    },
+    {
+        "label": "Squirtle",
+        "action": "https://c.tenor.com/8HPP7RwhVjgAAAAi/pok%C3%A9mon-happy.gif"
+    },
+    {
+        "label": "Charmander",
+        "action": "https://giffiles.alphacoders.com/257/257.gif"
+    }
+]
 githublink = 'https://github.com/manueldelreal/201-chuck-norris-callback'
-image1='bulbasaur.png'
-image2='squirtle.png'
-image3='charmander.png'
 heading1='Choose your starter'
+image1='https://www.serebii.net/pokemonmasters/syncpairs/professoroak.png'
 
 ########### Initiate the app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -21,13 +33,14 @@ app.title='Pokemon starters'
 ####### Layout of the app ########
 app.layout = html.Div([
     html.H2(heading1),
-    html.Img(src=app.get_asset_url(image1), style={'width': 'auto', 'height': '10%'}),
+    html.Img(src=image1, style={'width': 'auto', 'height': 'auto'}),
     dcc.Dropdown(id='your-input-here',
-                options=[{'label': i, 'value': i} for i in list_of_choices],
-                value='Bulbasaur',
+                options=[{'label': i["label"], 'value': choi} for choi,i in enumerate(list_of_choices)],
+                value=0,
                 style={'width': '500px'}),
     html.Br(),
     html.Div(id='your-output-here', children=''),
+    html.Img(src='', style={'width': '50%', 'height':'50%'}, id='action'),
     html.Br(),
     html.A('Code on Github', href=githublink),
 
@@ -35,10 +48,12 @@ app.layout = html.Div([
 
 
 ######### Interactive callbacks go here #########
-@app.callback(dash.dependencies.Output('your-output-here', 'children'),
-              [dash.dependencies.Input('your-input-here', 'value')])
-def display_value(whatever_you_chose):
-    return f'Great choice going with a {whatever_you_chose}.'
+@app.callback([Output('your-output-here', 'children'), Output('action', 'src')],
+              [Input('your-input-here', 'value')])
+def display_value(choice):
+    label = list_of_choices[choice]["label"]
+    action = list_of_choices[choice]["action"]
+    return f'Great choice going with a {label}.', action
 
 
 ######### Run the app #########
